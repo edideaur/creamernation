@@ -25,7 +25,7 @@ body {
     color: var(--text-color);
     font-size: 18px;
     line-height: 1.7;
-    
+
     padding-bottom: 120px; 
 }
 
@@ -186,7 +186,7 @@ a:hover {
     cursor: pointer;
     display: flex;
     align-items: center;
-    
+
     justify-content: flex-start; 
     gap: 0; 
     border-radius: 2px;
@@ -198,7 +198,7 @@ a:hover {
     color: #777; 
     width: 2.2ch; 
     text-align: right; 
-    
+
 }
 
 .track-number { color: #777; width: 2.2ch; text-align: right; margin-right: 1rem; }
@@ -218,9 +218,7 @@ a:hover {
 #now-playing-bar {
     position: fixed;
     bottom: -150px; 
-    
-    
-    
+
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -231,17 +229,15 @@ a:hover {
     color: var(--text-color);
     font-size: 1rem;
     padding: 0.75rem 1rem;
-    
-    
+
     border: 1px solid var(--accent-pink-dim);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
-    
-    
+
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 #now-playing-bar.visible {
-    
+
     bottom: 20px;
 }
 
@@ -327,7 +323,7 @@ footer {
     .container { margin: 1rem; padding: 1rem; }
     h1 { font-size: 2.5rem; }
     #releases-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-    
+
     .modal-top-section { flex-direction: column; }
     .modal-album-art { text-align: center; }
     .modal-album-art img { max-width: 200px; }
