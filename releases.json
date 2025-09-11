@@ -4,8 +4,7 @@
     "title": "THE CREAMER NATION TAPE VOL. 2",
     "catalogInfo": "CN-T2 SOON",
     "imageUrl": "./assets/CNTAPE2/CNTAPE2.png",
-    "links": {
-    },
+    "links": {},
     "tracklist": [
       "Light Up The Night",
       "Luxury Tax",
@@ -39,7 +38,8 @@
       "R.I.P. BOZO (REMIX)"
     ],
     "audioSrc": [
-      "./assets/RBZRMX/rip-bozo-remix.mp3""
+      "./assets/RBZRMX/rip-bozo-remix.mp3",
+      ""
     ]
   },
   {
@@ -215,7 +215,6 @@
       "./assets/MORECREAM/audio/06.1 CRACK NATION.mp3",
       "./assets/MORECREAM/audio/06.2 RAETARD.mp3",
       "./assets/MORECREAM/audio/07 CREAMER OUTRO.mp3"
-
     ]
   },
   {
