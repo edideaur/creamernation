@@ -27,6 +27,22 @@
     "audioSrc": []
   },
   {
+    "id": "RBZRMX",
+    "title": "R.I.P BOZO (REMIX)",
+    "catalogInfo": "CN-RBZRMX 9.11.25",
+    "imageUrl": "./assets/RBZRMX/SoundCloudAud.com_RIP BOZO (REMIX)_albumcover.jpeg",
+    "links": {
+      "SoundCloud": "https://sc.bloat.cat/creamer-nation-988867731/rip-bozo-remix",
+      "Download": "./assets/RBZRMX/rip-bozo-remix.mp3"
+    },
+    "tracklist": [
+      "R.I.P. BOZO (REMIX)"
+    ],
+    "audioSrc": [
+      "./assets/RBZRMX/rip-bozo-remix.mp3""
+    ]
+  },
+  {
     "id": "WCF",
     "title": "Windy City Freestyle",
     "catalogInfo": "CN-WCF 6.20.25",
