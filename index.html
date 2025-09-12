@@ -7,11 +7,9 @@
     
     <link href="https://github.com/eduardprigoana" rel="me">
     
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    
     
     <link rel="stylesheet" href="./style.css">
     <link rel="icon" type="image/x-icon" href="./favicon.png">
@@ -24,9 +22,7 @@
 
         <header>
             <h1>
-                
                 <span class="p-name">CREAMER NATION</span><br>
-                
                 <img class="u-logo" src="./assets/logo.png" height="90px" alt="Creamer Nation pixel art logo">
             </h1>
         </header>
@@ -56,20 +52,18 @@
             <hr>
             <section id="about" aria-labelledby="about-heading">
                 <h2 id="about-heading">[ ABOUT ]</h2>
-                
                 <p class="p-note">Creamer Nation is an <span class="p-category">experimental hip-hop collective</span> formed in late 2023 by a group of close internet friends. Blending humor with emotion, their sound evolved from meme rap into something more intentional and expressive. The core members are Archivist, Whisp, MC KV!, Alis, and InfiniteCris. Their discography includes THE CREAMER NATION TAPE VOL. 1, MORE CREAM, CREAMER SEASON, A CREAMER NATION CHRISTMAS, and their latest EP, Three-Of-A-Kind.</p>
             </section>
             <hr>
             <section id="contact" aria-labelledby="contact-heading">
                 <h2 id="contact-heading">[ CONTACT ]</h2>
-                
                 <p>E-Mail: <a class="u-email" href="mailto:diddy@creamernation.men">diddy@creamernation.men</a>. 
-                
                 Join our <a class="u-url" rel="me" href="https://discord.gg/8WDVr2bxmq">discord</a> for other queries</p>
             </section>
             <hr>
             <section id="webrings" aria-labelledby="webrings-heading">
                 <h2 id="webrings-heading">[ WEBRINGS ]</h2>
+                
                 <div class="webring-group">
                     <a href="https://baccyflap.com/noai/?prv&s=crm" target="_top" aria-label="Previous No AI site">←</a>
                     <a href="https://baccyflap.com/noai" target="_blank" rel="noopener noreferrer">No AI</a>
@@ -96,11 +90,12 @@
                 <a href="https://discord.gg/8WDVr2bxmq" target="_blank" rel="noopener noreferrer">[DISCORD]</a>
                 <a href="https://trackerhub.cx/sh/1IFhQbmAps11t0xPEZNhutt6vF1eaU8zVFeBda7OqOFc" target="_blank" rel="noopener noreferrer">[UNRELEASED]</a>
             </nav>
-            <p>&copy; 2025 - CREAMER NATION. NO RIGHTS RESERVED.</p>
+            
+            <p>&copy; <span id="copyright-year">2024</span> - CREAMER NATION. NO RIGHTS RESERVED.</p>
+            <script>document.getElementById('copyright-year').textContent = new Date().getFullYear();</script>
         </footer>
     </div>
 
-    
     <div class="modal-overlay" id="player-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
         <div class="modal-player">
             <button class="modal-close-btn" id="modal-close-btn" aria-label="Close player"><span aria-hidden="true">&times;</span></button>
@@ -110,7 +105,8 @@
                 </figure>
                 <div class="modal-details">
                     <h3 id="modal-title"></h3>
-                    <p class="artist-info" id="modal-artist"></p>
+                    
+                    <p class="artist-info p-name" id="modal-artist"></p>
                     <p class="catalog-info" id="modal-catalog"></p>
                     <div class="modal-listen-links" id="modal-links"></div>
                 </div>
@@ -118,7 +114,9 @@
             <ol class="modal-tracklist" id="modal-tracklist"></ol>
         </div>
     </div>
-    <audio id="audio-player"></audio>
+    
+    <audio id="audio-player" crossOrigin="anonymous"></audio> 
+
     <div id="now-playing-bar" role="region" aria-label="Music Player">
         <div class="player-content">
             <div class="player-album-art">
@@ -129,9 +127,10 @@
                 <div id="player-track-artist"></div>
             </div>
             <div class="player-controls">
-                <button id="prev-btn" aria-label="Previous track"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><title>Previous Track</title><path d="M13 2.5L5 8l8 5.5V2.5zM3 2.5v11h2V2.5H3z"></path></svg></button>
-                <button id="play-pause-btn" aria-label="Play"><span class="play-icon"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><title>Play</title><path d="M4.018 14L14.41 8 4.018 2z"></path></svg></span><span class="pause-icon"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><title>Pause</title><path d="M2.7 1a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7H2.7zm8 0a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7h-2.6z"></path></svg></span></button>
-                <button id="next-btn" aria-label="Next track"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><title>Next Track</title><path d="M11 2.5v11h2V2.5h-2zM3 2.5l8 5.5-8 5.5V2.5z"></path></svg></button>
+                
+                <button id="prev-btn" aria-label="Previous track"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 2.5L5 8l8 5.5V2.5zM3 2.5v11h2V2.5H3z"></path></svg></button>
+                <button id="play-pause-btn" aria-label="Play"><span class="play-icon"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.018 14L14.41 8 4.018 2z"></path></svg></span><span class="pause-icon"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.7 1a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7H2.7zm8 0a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7h-2.6z"></path></svg></span></button>
+                <button id="next-btn" aria-label="Next track"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M11 2.5v11h2V2.5h-2zM3 2.5l8 5.5-8 5.5V2.5z"></path></svg></button>
             </div>
              <div class="player-progress">
                 <span id="current-time">0:00</span>
