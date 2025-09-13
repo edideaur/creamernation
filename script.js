@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCloseBtn = document.getElementById('modal-close-btn');
     const modalAlbumImg = document.getElementById('modal-album-img');
     const modalTitle = document.getElementById('modal-title');
-    const modalArtist = document.getElementById('modal-artist'); 
+    const modalArtist = document.getElementById('modal-artist');
     const modalCatalog = document.getElementById('modal-catalog');
     const modalTracklist = document.getElementById('modal-tracklist');
     const modalLinks = document.getElementById('modal-links');
@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const VISIBLE_CLASS = 'visible';
     const PLAYING_CLASS = 'playing';
+    const ARTIST_NAME = 'CREAMER NATION';
     const releasesMap = new Map();
     const originalTitle = document.title;
     let playlist = [];
@@ -33,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const releaseElement = document.createElement('div');
         releaseElement.className = 'release-item';
         releaseElement.dataset.releaseId = release.id;
+        releaseElement.setAttribute('role', 'button');
+        releaseElement.setAttribute('tabindex', '0');
         releaseElement.innerHTML = `
             <img src="${release.imageUrl}" alt="Album cover for ${release.title}" loading="lazy" decoding="async">
             <h3>${release.title}</h3>
@@ -46,29 +49,36 @@ document.addEventListener('DOMContentLoaded', () => {
         modalAlbumImg.src = release.imageUrl;
         modalAlbumImg.alt = `Album cover for ${release.title}`;
         modalTitle.textContent = release.title;
-        modalArtist.textContent = release.artist; 
+        modalArtist.textContent = ARTIST_NAME;
         modalCatalog.textContent = release.catalogInfo;
 
         const tracklistFragment = document.createDocumentFragment();
         release.tracklist.forEach((track, index) => {
             const li = document.createElement('li');
             li.dataset.trackIndex = index;
-
+            li.setAttribute('role', 'button');
+            li.setAttribute('tabindex', '0');
             const trackNumber = document.createElement('span');
-            trackNumber.className = 'modal-track-number';
+            trackNumber.className = 'track-number';
             trackNumber.textContent = `${String(index + 1).padStart(2, '0')}.`;
-
-            const trackNameDiv = document.createElement('div');
-            trackNameDiv.append(trackNumber, ` ${track}`);
-            li.appendChild(trackNameDiv);
-
+            const trackName = document.createElement('span');
+            trackName.className = 'track-name';
+            trackName.textContent = track;
+            li.append(trackNumber, trackName);
             tracklistFragment.appendChild(li);
         });
         modalTracklist.replaceChildren(tracklistFragment);
 
-        modalLinks.innerHTML = Object.entries(release.links)
-            .map(([platform, url]) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${platform.toUpperCase()}</a>`)
-            .join('');
+        const linksFragment = document.createDocumentFragment();
+        Object.entries(release.links).forEach(([platform, url]) => {
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = platform.toUpperCase();
+            linksFragment.appendChild(link);
+        });
+        modalLinks.replaceChildren(linksFragment);
         updateTrackHighlight();
     };
 
@@ -92,12 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('./releases.json');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const releasesData = await response.json();
-
             if (!releasesData || releasesData.length === 0) {
                 releasesGrid.textContent = 'No tapes found.';
                 return;
             }
-
             const fragment = document.createDocumentFragment();
             releasesData.forEach(release => {
                 releasesMap.set(release.id, release);
@@ -105,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             releasesGrid.replaceChildren(fragment);
         } catch (error) {
-            console.error("Could not load releases:", error);
+            console.error("Failed to load releases:", error);
             releasesGrid.textContent = 'Error loading tapes. Please try again later.';
         }
     };
@@ -135,18 +143,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updatePlayerUI = (isPlaying) => {
         if (currentTrackIndex < 0 || playlist.length === 0) return;
-
         const track = playlist[currentTrackIndex];
         const release = releasesMap.get(track.releaseId);
         if (!release) return;
-
         if (playerArtImg.src !== release.imageUrl) {
-           playerArtImg.src = release.imageUrl;
+            playerArtImg.src = release.imageUrl;
         }
         playerTrackTitle.textContent = track.title;
-        playerTrackArtist.textContent = release.artist;
-        document.title = isPlaying ? `${track.title} - ${release.artist}` : originalTitle;
-
+        playerTrackArtist.textContent = ARTIST_NAME;
+        document.title = isPlaying ? `${track.title} - ${ARTIST_NAME}` : originalTitle;
         playPauseBtn.classList.toggle(PLAYING_CLASS, isPlaying);
         playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
         updateTrackHighlight();
@@ -155,13 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateTrackHighlight = () => {
         if (!playerModal.classList.contains(VISIBLE_CLASS)) return;
 
-        const currentPlayingLi = modalTracklist.querySelector(`.${PLAYING_CLASS}`);
-        if (currentPlayingLi) {
-            currentPlayingLi.classList.remove(PLAYING_CLASS);
+        const currentlyPlaying = modalTracklist.querySelector(`.${PLAYING_CLASS}`);
+        if (currentlyPlaying) {
+            currentlyPlaying.classList.remove(PLAYING_CLASS);
         }
 
-        if (playlist.length > 0) {
+        if (playlist.length > 0 && currentTrackIndex >= 0) {
             const currentTrack = playlist[currentTrackIndex];
+
             if (playerModal.dataset.releaseId === currentTrack.releaseId) {
                 const trackElement = modalTracklist.querySelector(`li[data-track-index="${currentTrack.trackIndex}"]`);
                 trackElement?.classList.add(PLAYING_CLASS);
@@ -175,9 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const release = releasesMap.get(track.releaseId);
         navigator.mediaSession.metadata = new MediaMetadata({
             title: track.title,
-            artist: release.artist,
+            artist: ARTIST_NAME,
             album: release.title,
-            artwork: [{ src: release.imageUrl, sizes: '512x512', type: 'image/jpeg' }]
+            artwork: [{ src: release.imageUrl, sizes: '512x512', type: 'image/webp' }]
         });
     };
 
@@ -200,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handlePlayPause = () => {
         if (audioPlayer.paused) {
-             if (currentTrackIndex < 0 && playlist.length > 0) {
+            if (currentTrackIndex < 0 && playlist.length > 0) {
                 playTrack(0);
             } else {
                 audioPlayer.play().catch(e => console.error("Play failed", e));
@@ -210,27 +216,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const playNext = () => {
-        if (playlist.length === 0) return;
-        const newIndex = (currentTrackIndex + 1) % playlist.length;
-        playTrack(newIndex);
-    };
-
-    const playPrev = () => {
-        if (playlist.length === 0) return;
-        const newIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-        playTrack(newIndex);
-    };
+    const playNext = () => playTrack((currentTrackIndex + 1) % playlist.length);
+    const playPrev = () => playTrack((currentTrackIndex - 1 + playlist.length) % playlist.length);
 
     const setupMediaSessionHandlers = () => {
         if (!('mediaSession' in navigator)) return;
-
-        navigator.mediaSession.setActionHandler('play', () => {
-            audioPlayer.play().catch(e => console.error("Media session play failed", e));
-        });
-        navigator.mediaSession.setActionHandler('pause', () => {
-            audioPlayer.pause();
-        });
+        navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
+        navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
         navigator.mediaSession.setActionHandler('nexttrack', playNext);
         navigator.mediaSession.setActionHandler('previoustrack', playPrev);
     };
@@ -240,55 +232,69 @@ document.addEventListener('DOMContentLoaded', () => {
             const releaseItem = e.target.closest('.release-item[data-release-id]');
             if (releaseItem) openModal(releaseItem.dataset.releaseId);
         });
-
+        releasesGrid.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const releaseItem = e.target.closest('.release-item[data-release-id]');
+                if (releaseItem) {
+                    e.preventDefault();
+                    openModal(releaseItem.dataset.releaseId);
+                }
+            }
+        });
         modalTracklist.addEventListener('click', (e) => {
             const trackItem = e.target.closest('li[data-track-index]');
             if (!trackItem) return;
-
             const releaseId = playerModal.dataset.releaseId;
             const release = releasesMap.get(releaseId);
             const clickedTrackIndex = parseInt(trackItem.dataset.trackIndex, 10);
 
             if (!playlist.length || playlist[0].releaseId !== releaseId) {
-                 playlist = release.tracklist.map((trackName, index) => ({
+                playlist = release.tracklist.map((trackName, index) => ({
                     title: trackName,
                     audioSrc: release.audioSrc[index],
                     releaseId: release.id,
                     trackIndex: index
                 }));
             }
-
             playTrack(clickedTrackIndex);
         });
-
         modalCloseBtn.addEventListener('click', closeModal);
         playerModal.addEventListener('click', (e) => {
             if (e.target === playerModal) closeModal();
         });
-
         document.addEventListener('keydown', (e) => {
-            if (e.key === "Escape" && playerModal.classList.contains(VISIBLE_CLASS)) {
-                closeModal();
-            }
+            if (e.key === "Escape" && playerModal.classList.contains(VISIBLE_CLASS)) closeModal();
         });
-
         playPauseBtn.addEventListener('click', handlePlayPause);
         nextBtn.addEventListener('click', playNext);
         prevBtn.addEventListener('click', playPrev);
-
         audioPlayer.addEventListener('timeupdate', updateProgress);
         audioPlayer.addEventListener('loadedmetadata', updateProgress);
         audioPlayer.addEventListener('ended', playNext);
         audioPlayer.addEventListener('play', () => handlePlaybackStateChange(true));
         audioPlayer.addEventListener('pause', () => handlePlaybackStateChange(false));
-
         progressBarContainer.addEventListener('click', setProgress);
+    };
+
+    const registerServiceWorker = () => {
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered successfully with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
     };
 
     const init = () => {
         loadReleases();
         setupMediaSessionHandlers();
         setupEventListeners();
+        registerServiceWorker(); 
     };
 
     init();

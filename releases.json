@@ -3,7 +3,7 @@
     "id": "TCNT2",
     "title": "THE CREAMER NATION TAPE VOL. 2",
     "catalogInfo": "CN-T2 SOON",
-    "imageUrl": "./assets/CNTAPE2/CNTAPE2.png",
+    "imageUrl": "./assets/CNTAPE2/CNTAPE2.webp",
     "links": {},
     "tracklist": [
       "Light Up The Night",
@@ -46,7 +46,7 @@
     "id": "WCF",
     "title": "Windy City Freestyle",
     "catalogInfo": "CN-WCF 6.20.25",
-    "imageUrl": "./assets/WCF/WCF.png",
+    "imageUrl": "./assets/WCF/WCF.webp",
     "links": {
       "SoundCloud": "https://sc.bloat.com/creamer-nation-988867731/windy-city-freestyle",
       "Download": "./assets/WCF/audio/01 Windy City Freestyle.mp3"
@@ -82,7 +82,7 @@
     "id": "VISION",
     "title": "VISION",
     "catalogInfo": "CN-VISION 1.10.25",
-    "imageUrl": "./assets/VISION/VISION.png",
+    "imageUrl": "./assets/VISION/VISION.webp",
     "links": {
       "Tidal": "https://tidal.com/album/420470433",
       "Spotify": "https://open.spotify.com/album/4ENMydvAyHsh1r5tDJ67l8",
@@ -100,7 +100,7 @@
     "id": "ACNC",
     "title": "A CREAMER NATION CHRISTMAS",
     "catalogInfo": "CN-ACNC 12.25.24",
-    "imageUrl": "./assets/ACNC/ACNC.png",
+    "imageUrl": "./assets/ACNC/ACNC.webp",
     "links": {
       "SoundCloud": "https://sc.bloat.com/creamer-nation-988867731/sets/a-creamer-nation-christmas",
       "Download": "./assets/ACNC/A Creamer Nation Christmas.zip"
@@ -130,7 +130,7 @@
     "id": "CRMRSZN",
     "title": "CREAMER SEASON",
     "catalogInfo": "CN-CRMRSZN 10.31.24",
-    "imageUrl": "./assets/CRMRSZN/CRMRSZN.png",
+    "imageUrl": "./assets/CRMRSZN/CRMRSZN.webp",
     "links": {
       "SoundCloud": "https://sc.bloat.com/creamer-nation-988867731/sets/the-creamer-nation-tape-vol-1",
       "Download": "./assets/CRMRSZN/CREAMER SEASON.zip"
@@ -174,7 +174,7 @@
     "id": "SRFR",
     "title": "SERIAL RAPIST FREESTYLE (REMIX)",
     "catalogInfo": "CN-SRFR 10.10.24",
-    "imageUrl": "./assets/SRFR/SRFR.png",
+    "imageUrl": "./assets/SRFR/SRFR.webp",
     "links": {
       "Untitled": "https://untitled.stream/library/project/UthWRh3J8XNnRrlZtODsA",
       "Download": "./assets/SRFR/SERIAL RAPIST FREESTYLE (REMIX).mp3"
@@ -190,7 +190,7 @@
     "id": "MC",
     "title": "MORE CREAM",
     "catalogInfo": "CN-MC 8.2.24",
-    "imageUrl": "./assets/MORECREAM/MORECREAM.png",
+    "imageUrl": "./assets/MORECREAM/MORECREAM.webp",
     "links": {
       "SoundCloud": "https://sc.bloat.cat/creamer-nation-988867731/sets/more-cream",
       "YouTube": "https://www.youtube.com/watch?v=2PEgjUoCHvw&list=PLY2C_3y164dvExzUd1ITFf6jU47RVVPhr",
@@ -221,7 +221,7 @@
     "id": "TCNT1",
     "title": "THE CREAMER NATION TAPE VOL. 1",
     "catalogInfo": "CN-T1 7.26.24",
-    "imageUrl": "./assets/CNTAPE1/CNTAPE1B.png",
+    "imageUrl": "./assets/CNTAPE1/CNTAPE1B.webp",
     "links": {
       "SoundCloud": "https://sc.bloat.cat/creamer-nation-988867731/sets/the-creamer-nation-tape-vol-1",
       "YouTube": "https://www.youtube.com/watch?v=2PEgjUoCHvw&list=PLY2C_3y164dvExzUd1ITFf6jU47RVVPhr",

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CREAMER NATION</title>
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d16aa5">
+
     <link href="https://github.com/eduardprigoana" rel="me">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +26,7 @@
         <header>
             <h1>
                 <span class="p-name">CREAMER NATION</span><br>
-                <img class="u-logo" src="./assets/logo.png" height="90px" alt="Creamer Nation pixel art logo">
+                <img class="u-logo" src="./assets/logo.webp" height="90px" alt="Creamer Nation pixel art logo">
             </h1>
         </header>
 
@@ -31,7 +34,6 @@
             <section id="music" aria-labelledby="music-heading">
                 <h2 id="music-heading">[ DISCOGRAPHY ]</h2>
                 <div id="releases-grid">
-                    
                     <div class="release-item-skeleton">
                         <div class="skeleton-img"></div>
                         <div class="skeleton-text"></div>
@@ -63,7 +65,6 @@
             <hr>
             <section id="webrings" aria-labelledby="webrings-heading">
                 <h2 id="webrings-heading">[ WEBRINGS ]</h2>
-                
                 <div class="webring-group">
                     <a href="https://baccyflap.com/noai/?prv&s=crm" target="_top" aria-label="Previous No AI site">←</a>
                     <a href="https://baccyflap.com/noai" target="_blank" rel="noopener noreferrer">No AI</a>
@@ -85,13 +86,11 @@
 
         <footer>
             <nav class="footer-links" aria-label="Social media and project links">
-                
                 <a class="u-url" rel="me" href="https://soundcloud.com/creamer-nation-988867731" target="_blank" rel="noopener noreferrer">[SOUNDCLOUD]</a>
                 <a href="https://discord.gg/8WDVr2bxmq" target="_blank" rel="noopener noreferrer">[DISCORD]</a>
                 <a href="https://trackerhub.cx/sh/1IFhQbmAps11t0xPEZNhutt6vF1eaU8zVFeBda7OqOFc" target="_blank" rel="noopener noreferrer">[UNRELEASED]</a>
             </nav>
-            
-            <p>&copy; <span id="copyright-year">2024</span> - CREAMER NATION. NO RIGHTS RESERVED.</p>
+            <p>&copy; <span id="copyright-year"></span> - CREAMER NATION. NO RIGHTS RESERVED.</p>
             <script>document.getElementById('copyright-year').textContent = new Date().getFullYear();</script>
         </footer>
     </div>
@@ -105,7 +104,6 @@
                 </figure>
                 <div class="modal-details">
                     <h3 id="modal-title"></h3>
-                    
                     <p class="artist-info p-name" id="modal-artist"></p>
                     <p class="catalog-info" id="modal-catalog"></p>
                     <div class="modal-listen-links" id="modal-links"></div>
@@ -127,7 +125,6 @@
                 <div id="player-track-artist"></div>
             </div>
             <div class="player-controls">
-                
                 <button id="prev-btn" aria-label="Previous track"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 2.5L5 8l8 5.5V2.5zM3 2.5v11h2V2.5H3z"></path></svg></button>
                 <button id="play-pause-btn" aria-label="Play"><span class="play-icon"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.018 14L14.41 8 4.018 2z"></path></svg></span><span class="pause-icon"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.7 1a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7H2.7zm8 0a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7h-2.6z"></path></svg></span></button>
                 <button id="next-btn" aria-label="Next track"><svg role="img" height="16" width="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M11 2.5v11h2V2.5h-2zM3 2.5l8 5.5-8 5.5V2.5z"></path></svg></button>

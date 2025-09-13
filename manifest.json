@@ -1,0 +1,28 @@
+{
+  "name": "CREAMER NATION",
+  "short_name": "Creamer",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#030303",
+  "theme_color": "#d16aa5",
+  "description": "The official website for the experimental hip-hop collective CREAMER NATION.",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}
