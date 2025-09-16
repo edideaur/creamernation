@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const openModal = (releaseId) => {
         const release = releasesMap.get(releaseId);
         if (!release) return;
+        nowPlayingBar.dataset.album = release.title;
         populateModal(release);
         playerModal.classList.add(VISIBLE_CLASS);
         playerModal.setAttribute('aria-hidden', 'false');
@@ -146,15 +147,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const track = playlist[currentTrackIndex];
         const release = releasesMap.get(track.releaseId);
         if (!release) return;
+    
         if (playerArtImg.src !== release.imageUrl) {
             playerArtImg.src = release.imageUrl;
         }
         playerTrackTitle.textContent = track.title;
-        playerTrackArtist.textContent = ARTIST_NAME;
+        // --- THIS IS THE ONLY LINE THAT CHANGED ---
+        playerTrackArtist.textContent = `${ARTIST_NAME} • ${release.title}`;
+        // ------------------------------------------
         document.title = isPlaying ? `${track.title} - ${ARTIST_NAME}` : originalTitle;
         playPauseBtn.classList.toggle(PLAYING_CLASS, isPlaying);
         playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
         updateTrackHighlight();
+    
+        // --- START: MODIFICATION FOR WEB SCROBBLER ---
+        const playerBar = document.getElementById('now-playing-bar');
+        let scrobblerAlbumEl = document.getElementById('web-scrobbler-album');
+        if (!scrobblerAlbumEl) {
+            scrobblerAlbumEl = document.createElement('span');
+            scrobblerAlbumEl.id = 'web-scrobbler-album';
+            scrobblerAlbumEl.style.display = 'none';
+            playerBar.appendChild(scrobblerAlbumEl);
+        }
+        scrobblerAlbumEl.textContent = release.title;
+        window.dispatchEvent(new Event('web-scrobbler:state-changed'));
+        // --- END: MODIFICATION FOR WEB SCROBBLER ---
     };
 
     const updateTrackHighlight = () => {

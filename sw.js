@@ -1,5 +1,6 @@
 const CACHE_NAME = 'creamer-nation-v2';
 const ASSETS_TO_CACHE = [
+    'https://fonts.googleapis.com/css2?family=VT323&display=swap',
     '/',
     'index.html',
     'style.css',
