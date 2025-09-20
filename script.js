@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         playerTrackTitle.textContent = track.title;
         // --- THIS IS THE ONLY LINE THAT CHANGED ---
-        playerTrackArtist.textContent = `${ARTIST_NAME} • ${release.title}`;
+        playerTrackArtist.textContent = `${ARTIST_NAME}`;
         // ------------------------------------------
         document.title = isPlaying ? `${track.title} - ${ARTIST_NAME}` : originalTitle;
         playPauseBtn.classList.toggle(PLAYING_CLASS, isPlaying);
