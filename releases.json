@@ -2,9 +2,12 @@
   {
     "id": "TCNT2",
     "title": "THE CREAMER NATION TAPE VOL. 2",
-    "catalogInfo": "CN-T2 SOON",
+    "catalogInfo": "CN-T2 9.25.25",
     "imageUrl": "./assets/CNTAPE2/CNTAPE2.webp",
-    "links": {},
+    "links": {
+      "Download": "./assets/RBZRMX/rip-bozo-remix.mp3",
+      "Untitled": "https://untitled.stream/library/project/4uZWtNIwzqW1qGGMQ62Rv"
+    },
     "tracklist": [
       "Light Up The Night",
       "Luxury Tax",
@@ -12,9 +15,9 @@
       "Fish Scales",
       "WAR 3",
       "With You",
-      "Deja",
+      "Deja (ft. Ja Maine)",
       "Month-Long Spree",
-      "Highway Robbery",
+      "Highway Robbery (Ft. Raf & Lukie)",
       "Lost In Translation",
       "Midnight Express (Interlude)",
       "Runnin' Outta Love",
@@ -23,7 +26,25 @@
       "Red Water",
       "The Hunted"
     ],
-    "audioSrc": []
+    "audioSrc": [
+  "./assets/CNTAPE2/audio/Light Up The Night.m4a",
+  "./assets/CNTAPE2/audio/Luxury Tax.m4a",
+  "./assets/CNTAPE2/audio/By Your Side.m4a",
+  "./assets/CNTAPE2/audio/Fish Scales.m4a",
+  "./assets/CNTAPE2/audio/WAR 3.m4a",
+  "./assets/CNTAPE2/audio/With You.m4a",
+  "./assets/CNTAPE2/audio/Deja (ft. Ja Maine).m4a",
+  "./assets/CNTAPE2/audio/Month-Long Spree.wav",
+  "./assets/CNTAPE2/audio/Highway Robbery (Ft. Raf & Lukie).m4a",
+  "./assets/CNTAPE2/audio/Lost In Translation.m4a",
+  "./assets/CNTAPE2/audio/Midnight Express (Interlude).m4a",
+  "./assets/CNTAPE2/audio/Runnin' Outta Love.m4a",
+  "./assets/CNTAPE2/audio/Boys Don't Cry.m4a",
+  "./assets/CNTAPE2/audio/Lunar Eclipse.m4a",
+  "./assets/CNTAPE2/audio/Red Water.m4a",
+  "./assets/CNTAPE2/audio/The Hunted.m4a"
+]
+
   },
   {
     "id": "RBZRMX",
