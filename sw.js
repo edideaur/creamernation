@@ -10,6 +10,21 @@ const ASSETS_TO_CACHE = [
     'favicon.png',
     './assets/logo.webp',
     './assets/CNTAPE2/CNTAPE2.webp',
+    './assets/CNTAPE2/audio/Light Up The Night.m4a',
+    './assets/CNTAPE2/audio/Luxury Tax.m4a',
+    './assets/CNTAPE2/audio/By Your Side.m4a',
+    './assets/CNTAPE2/audio/Fish Scales.m4a',
+    './assets/CNTAPE2/audio/WAR 3.m4a',
+    './assets/CNTAPE2/audio/Deja (ft. Ja Maine).m4a',
+    './assets/CNTAPE2/audio/Month-Long Spree.wav',
+    './assets/CNTAPE2/audio/Highway Robbery (Ft. Raf & Lukie).m4a',
+    './assets/CNTAPE2/audio/Lost In Translation.m4a',
+    './assets/CNTAPE2/audio/Midnight Express (Interlude).m4a',
+    './assets/CNTAPE2/audio/Runnin\' Outta Love.m4a',
+    './assets/CNTAPE2/audio/Boys Don\'t Cry.m4a',
+    './assets/CNTAPE2/audio/Lunar Eclipse.m4a',
+    './assets/CNTAPE2/audio/Red Water.m4a',
+    './assets/CNTAPE2/audio/The Hunted.m4a',
     './assets/RBZRMX/SoundCloudAud.com_RIP BOZO (REMIX)_albumcover.jpeg',
     './assets/RBZRMX/rip-bozo-remix.mp3',
     './assets/WCF/WCF.webp',
@@ -79,13 +94,10 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', event => {
-
     event.waitUntil(
-
         caches.open(CACHE_NAME)
             .then(cache => {
                 console.log('Opened cache and caching assets');
-
                 return cache.addAll(ASSETS_TO_CACHE);
             })
     );
@@ -96,7 +108,6 @@ self.addEventListener('activate', event => {
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-
                     if (cacheName !== CACHE_NAME) {
                         console.log('Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
@@ -108,19 +119,10 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-
     event.respondWith(
         caches.match(event.request)
             .then(cachedResponse => {
-
-                if (cachedResponse) {
-                    return cachedResponse;
-                }
-
-                return fetch(event.request).then(networkResponse => {
-
-                    return networkResponse;
-                });
+                return cachedResponse || fetch(event.request);
             })
     );
 });
