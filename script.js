@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const nowPlayingBar = document.getElementById('now-playing-bar');
     const playerArtImg = document.getElementById('player-art-img');
     const playerTrackTitle = document.getElementById('player-track-title');
+
+    const playerAlbumTitle = document.getElementById('player-album-title');
     const playerTrackArtist = document.getElementById('player-track-artist');
     const prevBtn = document.getElementById('prev-btn');
     const playPauseBtn = document.getElementById('play-pause-btn');
@@ -85,17 +87,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const openModal = (releaseId) => {
         const release = releasesMap.get(releaseId);
         if (!release) return;
-        nowPlayingBar.dataset.album = release.title;
+
         populateModal(release);
         playerModal.classList.add(VISIBLE_CLASS);
         playerModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+
+        const newHash = `#${release.id}`;
+        if (window.location.hash !== newHash) {
+            history.pushState({ releaseId: release.id }, `${release.title} - ${ARTIST_NAME}`, newHash);
+        }
+        document.title = `${release.title} - ${ARTIST_NAME}`;
     };
 
     const closeModal = () => {
+        if (!playerModal.classList.contains(VISIBLE_CLASS)) return; 
+
         playerModal.classList.remove(VISIBLE_CLASS);
         playerModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+
+        history.pushState(null, originalTitle, window.location.pathname + window.location.search);
+
+        if (audioPlayer.paused) {
+            document.title = originalTitle;
+        }
+    };
+
+    const handleUrlHash = () => {
+        const releaseId = window.location.hash.substring(1);
+        if (releaseId && releasesMap.has(releaseId)) {
+            openModal(releaseId);
+        } else {
+            closeModal();
+        }
     };
 
     const loadReleases = async () => {
@@ -147,31 +172,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const track = playlist[currentTrackIndex];
         const release = releasesMap.get(track.releaseId);
         if (!release) return;
-    
+
         if (playerArtImg.src !== release.imageUrl) {
             playerArtImg.src = release.imageUrl;
+            playerArtImg.alt = `Album art for ${release.title}`;
         }
         playerTrackTitle.textContent = track.title;
-        // --- THIS IS THE ONLY LINE THAT CHANGED ---
-        playerTrackArtist.textContent = `${ARTIST_NAME}`;
-        // ------------------------------------------
-        document.title = isPlaying ? `${track.title} - ${ARTIST_NAME}` : originalTitle;
+
+        playerAlbumTitle.textContent = release.title;
+        playerTrackArtist.textContent = ARTIST_NAME;
+
+        document.title = isPlaying ? `▶ ${track.title} - ${ARTIST_NAME}` : `${track.title} - ${ARTIST_NAME}`;
+
         playPauseBtn.classList.toggle(PLAYING_CLASS, isPlaying);
         playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
         updateTrackHighlight();
-    
-        // --- START: MODIFICATION FOR WEB SCROBBLER ---
-        const playerBar = document.getElementById('now-playing-bar');
-        let scrobblerAlbumEl = document.getElementById('web-scrobbler-album');
-        if (!scrobblerAlbumEl) {
-            scrobblerAlbumEl = document.createElement('span');
-            scrobblerAlbumEl.id = 'web-scrobbler-album';
-            scrobblerAlbumEl.style.display = 'none';
-            playerBar.appendChild(scrobblerAlbumEl);
-        }
-        scrobblerAlbumEl.textContent = release.title;
-        window.dispatchEvent(new Event('web-scrobbler:state-changed'));
-        // --- END: MODIFICATION FOR WEB SCROBBLER ---
     };
 
     const updateTrackHighlight = () => {
@@ -289,8 +304,19 @@ document.addEventListener('DOMContentLoaded', () => {
         audioPlayer.addEventListener('loadedmetadata', updateProgress);
         audioPlayer.addEventListener('ended', playNext);
         audioPlayer.addEventListener('play', () => handlePlaybackStateChange(true));
-        audioPlayer.addEventListener('pause', () => handlePlaybackStateChange(false));
+        audioPlayer.addEventListener('pause', () => {
+            handlePlaybackStateChange(false);
+
+            const releaseId = window.location.hash.substring(1);
+            if (releaseId && releasesMap.has(releaseId)) {
+                document.title = `${releasesMap.get(releaseId).title} - ${ARTIST_NAME}`;
+            } else {
+                document.title = originalTitle;
+            }
+        });
         progressBarContainer.addEventListener('click', setProgress);
+
+        window.addEventListener('popstate', handleUrlHash);
     };
 
     const registerServiceWorker = () => {
@@ -307,11 +333,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const init = () => {
-        loadReleases();
+    const init = async () => {
         setupMediaSessionHandlers();
         setupEventListeners();
         registerServiceWorker(); 
+
+        await loadReleases();
+
+        handleUrlHash();
     };
 
     init();
