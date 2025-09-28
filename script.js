@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const nowPlayingBar = document.getElementById('now-playing-bar');
     const playerArtImg = document.getElementById('player-art-img');
     const playerTrackTitle = document.getElementById('player-track-title');
-
     const playerAlbumTitle = document.getElementById('player-album-title');
     const playerTrackArtist = document.getElementById('player-track-artist');
     const prevBtn = document.getElementById('prev-btn');
@@ -31,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalTitle = document.title;
     let playlist = [];
     let currentTrackIndex = -1;
+    let focusedElementBeforeModal;
 
     const createReleaseElement = (release) => {
         const releaseElement = document.createElement('div');
@@ -60,13 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
             li.dataset.trackIndex = index;
             li.setAttribute('role', 'button');
             li.setAttribute('tabindex', '0');
-            const trackNumber = document.createElement('span');
-            trackNumber.className = 'track-number';
-            trackNumber.textContent = `${String(index + 1).padStart(2, '0')}.`;
-            const trackName = document.createElement('span');
-            trackName.className = 'track-name';
-            trackName.textContent = track;
-            li.append(trackNumber, trackName);
+            li.innerHTML = `<span class="track-number">${String(index + 1).padStart(2, '0')}.</span><span class="track-name">${track}</span>`;
             tracklistFragment.appendChild(li);
         });
         modalTracklist.replaceChildren(tracklistFragment);
@@ -83,15 +77,38 @@ document.addEventListener('DOMContentLoaded', () => {
         modalLinks.replaceChildren(linksFragment);
         updateTrackHighlight();
     };
+    
+    const trapFocusInModal = (e) => {
+        if (e.key !== 'Tab') return;
+        
+        const focusableElements = playerModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+            if (document.activeElement === firstElement) {
+                lastElement.focus();
+                e.preventDefault();
+            }
+        } else {
+            if (document.activeElement === lastElement) {
+                firstElement.focus();
+                e.preventDefault();
+            }
+        }
+    };
 
     const openModal = (releaseId) => {
         const release = releasesMap.get(releaseId);
         if (!release) return;
 
+        focusedElementBeforeModal = document.activeElement;
         populateModal(release);
         playerModal.classList.add(VISIBLE_CLASS);
         playerModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        modalCloseBtn.focus();
+        document.addEventListener('keydown', trapFocusInModal);
 
         const newHash = `#${release.id}`;
         if (window.location.hash !== newHash) {
@@ -101,14 +118,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const closeModal = () => {
-        if (!playerModal.classList.contains(VISIBLE_CLASS)) return; 
+        if (!playerModal.classList.contains(VISIBLE_CLASS)) return;
 
         playerModal.classList.remove(VISIBLE_CLASS);
         playerModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        document.removeEventListener('keydown', trapFocusInModal);
+        focusedElementBeforeModal?.focus();
 
-        history.pushState(null, originalTitle, window.location.pathname + window.location.search);
-
+        if (window.location.hash) {
+            history.pushState(null, originalTitle, window.location.pathname + window.location.search);
+        }
         if (audioPlayer.paused) {
             document.title = originalTitle;
         }
@@ -137,7 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 releasesMap.set(release.id, release);
                 fragment.appendChild(createReleaseElement(release));
             });
-            releasesGrid.replaceChildren(fragment);
+            releasesGrid.innerHTML = '';
+            releasesGrid.appendChild(fragment);
+            releasesGrid.classList.add('loaded');
         } catch (error) {
             console.error("Failed to load releases:", error);
             releasesGrid.textContent = 'Error loading tapes. Please try again later.';
@@ -156,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressPercent = (currentTime / duration) * 100 || 0;
         progressBar.style.transform = `scaleX(${progressPercent / 100})`;
         currentTimeEl.textContent = formatTime(currentTime);
-        totalDurationEl.textContent = formatTime(duration);
+        if(isFinite(duration)) totalDurationEl.textContent = formatTime(duration);
     };
 
     const setProgress = (e) => {
@@ -178,28 +200,21 @@ document.addEventListener('DOMContentLoaded', () => {
             playerArtImg.alt = `Album art for ${release.title}`;
         }
         playerTrackTitle.textContent = track.title;
-
         playerAlbumTitle.textContent = release.title;
         playerTrackArtist.textContent = ARTIST_NAME;
-
         document.title = isPlaying ? `▶ ${track.title} - ${ARTIST_NAME}` : `${track.title} - ${ARTIST_NAME}`;
-
         playPauseBtn.classList.toggle(PLAYING_CLASS, isPlaying);
         playPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
         updateTrackHighlight();
     };
 
     const updateTrackHighlight = () => {
-        if (!playerModal.classList.contains(VISIBLE_CLASS)) return;
-
         const currentlyPlaying = modalTracklist.querySelector(`.${PLAYING_CLASS}`);
         if (currentlyPlaying) {
             currentlyPlaying.classList.remove(PLAYING_CLASS);
         }
-
         if (playlist.length > 0 && currentTrackIndex >= 0) {
             const currentTrack = playlist[currentTrackIndex];
-
             if (playerModal.dataset.releaseId === currentTrack.releaseId) {
                 const trackElement = modalTracklist.querySelector(`li[data-track-index="${currentTrack.trackIndex}"]`);
                 trackElement?.classList.add(PLAYING_CLASS);
@@ -237,14 +252,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handlePlayPause = () => {
-        if (audioPlayer.paused) {
-            if (currentTrackIndex < 0 && playlist.length > 0) {
-                playTrack(0);
-            } else {
-                audioPlayer.play().catch(e => console.error("Play failed", e));
-            }
-        } else {
+        if (audioPlayer.src && !audioPlayer.paused) {
             audioPlayer.pause();
+        } else if (audioPlayer.src && audioPlayer.paused) {
+            audioPlayer.play().catch(e => console.error("Play failed", e));
+        } else if (!audioPlayer.src && playlist.length > 0) {
+            playTrack(0);
         }
     };
 
@@ -253,10 +266,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const setupMediaSessionHandlers = () => {
         if (!('mediaSession' in navigator)) return;
-        navigator.mediaSession.setActionHandler('play', () => audioPlayer.play());
-        navigator.mediaSession.setActionHandler('pause', () => audioPlayer.pause());
+        navigator.mediaSession.setActionHandler('play', handlePlayPause);
+        navigator.mediaSession.setActionHandler('pause', handlePlayPause);
         navigator.mediaSession.setActionHandler('nexttrack', playNext);
         navigator.mediaSession.setActionHandler('previoustrack', playPrev);
+    };
+    
+    const handleGenericKeyEvent = (e, targetSelector, action) => {
+        const element = e.target.closest(targetSelector);
+        if (element && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            action(element);
+        }
     };
 
     const setupEventListeners = () => {
@@ -264,15 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const releaseItem = e.target.closest('.release-item[data-release-id]');
             if (releaseItem) openModal(releaseItem.dataset.releaseId);
         });
-        releasesGrid.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                const releaseItem = e.target.closest('.release-item[data-release-id]');
-                if (releaseItem) {
-                    e.preventDefault();
-                    openModal(releaseItem.dataset.releaseId);
-                }
-            }
-        });
+        releasesGrid.addEventListener('keydown', (e) => handleGenericKeyEvent(e, '.release-item[data-release-id]', item => openModal(item.dataset.releaseId)));
+        
         modalTracklist.addEventListener('click', (e) => {
             const trackItem = e.target.closest('li[data-track-index]');
             if (!trackItem) return;
@@ -290,6 +304,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             playTrack(clickedTrackIndex);
         });
+        modalTracklist.addEventListener('keydown', (e) => handleGenericKeyEvent(e, 'li[data-track-index]', item => item.click()));
+
         modalCloseBtn.addEventListener('click', closeModal);
         playerModal.addEventListener('click', (e) => {
             if (e.target === playerModal) closeModal();
@@ -297,38 +313,31 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', (e) => {
             if (e.key === "Escape" && playerModal.classList.contains(VISIBLE_CLASS)) closeModal();
         });
+        
         playPauseBtn.addEventListener('click', handlePlayPause);
         nextBtn.addEventListener('click', playNext);
         prevBtn.addEventListener('click', playPrev);
+        
         audioPlayer.addEventListener('timeupdate', updateProgress);
         audioPlayer.addEventListener('loadedmetadata', updateProgress);
         audioPlayer.addEventListener('ended', playNext);
         audioPlayer.addEventListener('play', () => handlePlaybackStateChange(true));
         audioPlayer.addEventListener('pause', () => {
             handlePlaybackStateChange(false);
-
-            const releaseId = window.location.hash.substring(1);
-            if (releaseId && releasesMap.has(releaseId)) {
-                document.title = `${releasesMap.get(releaseId).title} - ${ARTIST_NAME}`;
-            } else {
-                document.title = originalTitle;
-            }
+            const inModalView = playerModal.classList.contains(VISIBLE_CLASS);
+            if (!inModalView) document.title = originalTitle;
         });
-        progressBarContainer.addEventListener('click', setProgress);
 
+        progressBarContainer.addEventListener('click', setProgress);
         window.addEventListener('popstate', handleUrlHash);
     };
 
     const registerServiceWorker = () => {
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registered successfully with scope:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('ServiceWorker registration failed:', error);
-                    });
+                navigator.serviceWorker.register('./sw.js').catch(error => {
+                    console.log('ServiceWorker registration failed:', error);
+                });
             });
         }
     };
@@ -336,10 +345,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const init = async () => {
         setupMediaSessionHandlers();
         setupEventListeners();
-        registerServiceWorker(); 
-
+        registerServiceWorker();
         await loadReleases();
-
         handleUrlHash();
     };
 
