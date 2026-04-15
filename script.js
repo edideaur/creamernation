@@ -1,3 +1,5 @@
+import { LastFMScrobbler } from './lastfm.js';
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const releasesGrid = document.getElementById('releases-grid');
@@ -23,6 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.getElementById('progress-bar');
     const progressBarContainer = document.getElementById('progress-bar-container');
 
+    // Last.fm UI elements
+    const lastfmConnectBtn = document.getElementById('lastfm-connect-btn');
+    const lastfmModal = document.getElementById('lastfm-modal');
+    const lastfmModalClose = document.getElementById('lastfm-modal-close');
+    const lastfmNotConnected = document.getElementById('lastfm-not-connected');
+    const lastfmConnected = document.getElementById('lastfm-connected');
+    const lastfmAuthStartBtn = document.getElementById('lastfm-auth-start-btn');
+    const lastfmAuthStep2 = document.getElementById('lastfm-auth-step2');
+    const lastfmAuthCompleteBtn = document.getElementById('lastfm-auth-complete-btn');
+    const lastfmDisconnectBtn = document.getElementById('lastfm-disconnect-btn');
+    const lastfmUsernameDisplay = document.getElementById('lastfm-username-display');
+
     const VISIBLE_CLASS = 'visible';
     const PLAYING_CLASS = 'playing';
     const ARTIST_NAME = 'CREAMER NATION';
@@ -31,6 +45,105 @@ document.addEventListener('DOMContentLoaded', () => {
     let playlist = [];
     let currentTrackIndex = -1;
     let focusedElementBeforeModal;
+    let pendingLastfmToken = null;
+
+    const scrobbler = new LastFMScrobbler();
+
+    // Strip featured artist info from track titles for clean scrobbling
+    const cleanTrackTitle = (title) =>
+        title.replace(/\s*\((?:ft|feat|featuring|w\/)\.?\s+[^)]+\)/gi, '').trim();
+
+    const buildScrobbleTrack = (track, release) => ({
+        title: track.title,
+        cleanTitle: cleanTrackTitle(track.title),
+        artist: ARTIST_NAME,
+        album: { title: release.title },
+        duration: isFinite(audioPlayer.duration) ? audioPlayer.duration : 0,
+        trackNumber: track.trackIndex + 1,
+    });
+
+    // --- Last.fm UI ---
+
+    const updateLastfmBtn = () => {
+        if (!lastfmConnectBtn) return;
+        lastfmConnectBtn.textContent = scrobbler.isAuthenticated()
+            ? `[LFM: ${scrobbler.username}]`
+            : '[LAST.FM]';
+    };
+
+    const openLastfmModal = () => {
+        if (scrobbler.isAuthenticated()) {
+            lastfmNotConnected.hidden = true;
+            lastfmConnected.hidden = false;
+            lastfmUsernameDisplay.textContent = scrobbler.username;
+        } else {
+            lastfmNotConnected.hidden = false;
+            lastfmConnected.hidden = true;
+            lastfmAuthStep2.hidden = true;
+        }
+        lastfmModal.classList.add(VISIBLE_CLASS);
+        lastfmModal.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeLastfmModal = () => {
+        lastfmModal.classList.remove(VISIBLE_CLASS);
+        lastfmModal.setAttribute('aria-hidden', 'true');
+    };
+
+    const setupLastfmUI = () => {
+        updateLastfmBtn();
+
+        lastfmConnectBtn?.addEventListener('click', openLastfmModal);
+        lastfmModalClose?.addEventListener('click', closeLastfmModal);
+        lastfmModal?.addEventListener('click', (e) => { if (e.target === lastfmModal) closeLastfmModal(); });
+
+        lastfmAuthStartBtn?.addEventListener('click', async () => {
+            try {
+                lastfmAuthStartBtn.textContent = 'LOADING...';
+                lastfmAuthStartBtn.disabled = true;
+                const { token, url } = await scrobbler.getAuthUrl();
+                pendingLastfmToken = token;
+                window.open(url, '_blank', 'noopener,noreferrer');
+                lastfmAuthStep2.hidden = false;
+                lastfmAuthStartBtn.textContent = 'CONNECT LAST.FM ↗';
+                lastfmAuthStartBtn.disabled = false;
+            } catch (err) {
+                lastfmAuthStartBtn.textContent = 'ERROR - TRY AGAIN';
+                lastfmAuthStartBtn.disabled = false;
+                console.error('Failed to start Last.fm auth:', err);
+            }
+        });
+
+        lastfmAuthCompleteBtn?.addEventListener('click', async () => {
+            if (!pendingLastfmToken) return;
+            try {
+                lastfmAuthCompleteBtn.textContent = 'CONNECTING...';
+                lastfmAuthCompleteBtn.disabled = true;
+                const result = await scrobbler.completeAuthentication(pendingLastfmToken);
+                pendingLastfmToken = null;
+                lastfmUsernameDisplay.textContent = result.username;
+                lastfmNotConnected.hidden = true;
+                lastfmConnected.hidden = false;
+                updateLastfmBtn();
+                lastfmAuthCompleteBtn.textContent = "I'VE AUTHORIZED";
+                lastfmAuthCompleteBtn.disabled = false;
+            } catch (err) {
+                lastfmAuthCompleteBtn.textContent = 'FAILED - TRY AGAIN';
+                lastfmAuthCompleteBtn.disabled = false;
+                console.error('Failed to complete Last.fm auth:', err);
+            }
+        });
+
+        lastfmDisconnectBtn?.addEventListener('click', () => {
+            scrobbler.disconnect();
+            lastfmNotConnected.hidden = false;
+            lastfmConnected.hidden = true;
+            lastfmAuthStep2.hidden = true;
+            updateLastfmBtn();
+        });
+    };
+
+    // --- Releases ---
 
     const createReleaseElement = (release) => {
         const releaseElement = document.createElement('div');
@@ -77,24 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
         modalLinks.replaceChildren(linksFragment);
         updateTrackHighlight();
     };
-    
+
     const trapFocusInModal = (e) => {
         if (e.key !== 'Tab') return;
-        
+
         const focusableElements = playerModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
 
         if (e.shiftKey) {
-            if (document.activeElement === firstElement) {
-                lastElement.focus();
-                e.preventDefault();
-            }
+            if (document.activeElement === firstElement) { lastElement.focus(); e.preventDefault(); }
         } else {
-            if (document.activeElement === lastElement) {
-                firstElement.focus();
-                e.preventDefault();
-            }
+            if (document.activeElement === lastElement) { firstElement.focus(); e.preventDefault(); }
         }
     };
 
@@ -129,18 +236,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.location.hash) {
             history.pushState(null, originalTitle, window.location.pathname + window.location.search);
         }
-        if (audioPlayer.paused) {
-            document.title = originalTitle;
-        }
+        if (audioPlayer.paused) document.title = originalTitle;
     };
 
     const handleUrlHash = () => {
         const releaseId = window.location.hash.substring(1);
-        if (releaseId && releasesMap.has(releaseId)) {
-            openModal(releaseId);
-        } else {
-            closeModal();
-        }
+        if (releaseId && releasesMap.has(releaseId)) openModal(releaseId);
+        else closeModal();
     };
 
     const loadReleases = async () => {
@@ -166,6 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- Player ---
+
     const formatTime = (seconds) => {
         const value = isFinite(seconds) ? Math.floor(seconds) : 0;
         const minutes = Math.floor(value / 60);
@@ -178,15 +282,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressPercent = (currentTime / duration) * 100 || 0;
         progressBar.style.transform = `scaleX(${progressPercent / 100})`;
         currentTimeEl.textContent = formatTime(currentTime);
-        if(isFinite(duration)) totalDurationEl.textContent = formatTime(duration);
+        if (isFinite(duration)) totalDurationEl.textContent = formatTime(duration);
     };
 
     const setProgress = (e) => {
         const { duration } = audioPlayer;
         if (!isFinite(duration)) return;
-        const width = progressBarContainer.clientWidth;
-        const clickX = e.offsetX;
-        audioPlayer.currentTime = (clickX / width) * duration;
+        audioPlayer.currentTime = (e.offsetX / progressBarContainer.clientWidth) * duration;
     };
 
     const updatePlayerUI = (isPlaying) => {
@@ -209,15 +311,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateTrackHighlight = () => {
-        const currentlyPlaying = modalTracklist.querySelector(`.${PLAYING_CLASS}`);
-        if (currentlyPlaying) {
-            currentlyPlaying.classList.remove(PLAYING_CLASS);
-        }
+        modalTracklist.querySelector(`.${PLAYING_CLASS}`)?.classList.remove(PLAYING_CLASS);
         if (playlist.length > 0 && currentTrackIndex >= 0) {
             const currentTrack = playlist[currentTrackIndex];
             if (playerModal.dataset.releaseId === currentTrack.releaseId) {
-                const trackElement = modalTracklist.querySelector(`li[data-track-index="${currentTrack.trackIndex}"]`);
-                trackElement?.classList.add(PLAYING_CLASS);
+                modalTracklist.querySelector(`li[data-track-index="${currentTrack.trackIndex}"]`)
+                    ?.classList.add(PLAYING_CLASS);
             }
         }
     };
@@ -271,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.mediaSession.setActionHandler('nexttrack', playNext);
         navigator.mediaSession.setActionHandler('previoustrack', playPrev);
     };
-    
+
     const handleGenericKeyEvent = (e, targetSelector, action) => {
         const element = e.target.closest(targetSelector);
         if (element && (e.key === 'Enter' || e.key === ' ')) {
@@ -286,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (releaseItem) openModal(releaseItem.dataset.releaseId);
         });
         releasesGrid.addEventListener('keydown', (e) => handleGenericKeyEvent(e, '.release-item[data-release-id]', item => openModal(item.dataset.releaseId)));
-        
+
         modalTracklist.addEventListener('click', (e) => {
             const trackItem = e.target.closest('li[data-track-index]');
             if (!trackItem) return;
@@ -299,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: trackName,
                     audioSrc: release.audioSrc[index],
                     releaseId: release.id,
-                    trackIndex: index
+                    trackIndex: index,
                 }));
             }
             playTrack(clickedTrackIndex);
@@ -307,25 +406,31 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTracklist.addEventListener('keydown', (e) => handleGenericKeyEvent(e, 'li[data-track-index]', item => item.click()));
 
         modalCloseBtn.addEventListener('click', closeModal);
-        playerModal.addEventListener('click', (e) => {
-            if (e.target === playerModal) closeModal();
-        });
+        playerModal.addEventListener('click', (e) => { if (e.target === playerModal) closeModal(); });
         document.addEventListener('keydown', (e) => {
-            if (e.key === "Escape" && playerModal.classList.contains(VISIBLE_CLASS)) closeModal();
+            if (e.key === 'Escape' && playerModal.classList.contains(VISIBLE_CLASS)) closeModal();
         });
-        
+
         playPauseBtn.addEventListener('click', handlePlayPause);
         nextBtn.addEventListener('click', playNext);
         prevBtn.addEventListener('click', playPrev);
-        
+
         audioPlayer.addEventListener('timeupdate', updateProgress);
-        audioPlayer.addEventListener('loadedmetadata', updateProgress);
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            updateProgress();
+            // Fire scrobbler once we have the duration
+            if (currentTrackIndex >= 0) {
+                const track = playlist[currentTrackIndex];
+                const release = releasesMap.get(track.releaseId);
+                if (release) scrobbler.onTrackChange(buildScrobbleTrack(track, release));
+            }
+        });
         audioPlayer.addEventListener('ended', playNext);
         audioPlayer.addEventListener('play', () => handlePlaybackStateChange(true));
         audioPlayer.addEventListener('pause', () => {
             handlePlaybackStateChange(false);
-            const inModalView = playerModal.classList.contains(VISIBLE_CLASS);
-            if (!inModalView) document.title = originalTitle;
+            scrobbler.onPlaybackStop();
+            if (!playerModal.classList.contains(VISIBLE_CLASS)) document.title = originalTitle;
         });
 
         progressBarContainer.addEventListener('click', setProgress);
@@ -345,6 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const init = async () => {
         setupMediaSessionHandlers();
         setupEventListeners();
+        setupLastfmUI();
         registerServiceWorker();
         await loadReleases();
         handleUrlHash();

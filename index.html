@@ -18,15 +18,16 @@
     <link rel="icon" type="image/x-icon" href="./favicon.png">
 </head>
 <body>
-    
     <div class="container h-card" lang="en">
+        <button type="button" id="lastfm-connect-btn">[LAST.FM]</button>
         
         <a class="u-url" href="https://creamernation.men/" hidden>Creamer Nation</a>
 
         <header>
             <h1>
-                <span class="p-name">CREAMER NATION</span><br>
-                <img class="u-logo" src="./assets/logo.webp" height="90px" alt="Creamer Nation logo" loading="lazy">
+                <img class="u-logo" src="./assets/cncollective.png" height="90px" alt="Creamer Nation logo" loading="lazy">
+                <span class="p-name">The CN Collective</span>
+                <img class="u-logo" src="./assets/cncollective.png" height="90px" alt="" loading="lazy" aria-hidden="true">
             </h1>
         </header>
 
@@ -88,7 +89,7 @@
             <nav class="footer-links" aria-label="Social media and project links">
                 <a class="u-url" rel="me" href="https://soundcloud.com/creamer-nation-988867731" target="_blank" rel="noopener noreferrer">[SOUNDCLOUD]</a>
                 <a href="https://discord.gg/8WDVr2bxmq" target="_blank" rel="noopener noreferrer">[DISCORD]</a>
-                <a href="https://trackerhub.cx/sh/1IFhQbmAps11t0xPEZNhutt6vF1eaU8zVFeBda7OqOFc" target="_blank" rel="noopener noreferrer">[UNRELEASED]</a>
+                <a href="https://artistgrid.cx/view?id=1IFhQbmAps11t0xPEZNhutt6vF1eaU8zVFeBda7OqOFc&artist=Creamer%20Nation" target="_blank" rel="noopener noreferrer">[UNRELEASED]</a>
             </nav>
             <p>&copy; <span id="copyright-year"></span> - CREAMER NATION. NO RIGHTS RESERVED.</p>
             <script>document.getElementById('copyright-year').textContent = new Date().getFullYear();</script>
@@ -137,6 +138,25 @@
             </div>
         </div>
     </div>
-    <script src="./script.js" defer></script>
+    <div id="lastfm-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="lastfm-modal-heading" aria-hidden="true">
+        <div class="modal-player">
+            <button type="button" class="modal-close-btn" id="lastfm-modal-close" aria-label="Close Last.fm"><span aria-hidden="true">&times;</span></button>
+            <h3 id="lastfm-modal-heading">[ LAST.FM ]</h3>
+            <div id="lastfm-not-connected">
+                <p>Connect your Last.fm account to scrobble your listens.</p>
+                <button type="button" id="lastfm-auth-start-btn">CONNECT LAST.FM ↗</button>
+                <div id="lastfm-auth-step2" hidden>
+                    <p>After authorizing on Last.fm, click below:</p>
+                    <button type="button" id="lastfm-auth-complete-btn">I'VE AUTHORIZED</button>
+                </div>
+            </div>
+            <div id="lastfm-connected" hidden>
+                <p>Scrobbling as <strong id="lastfm-username-display"></strong></p>
+                <button type="button" id="lastfm-disconnect-btn">DISCONNECT</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js" type="module"></script>
 </body>
 </html>

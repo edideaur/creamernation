@@ -48,7 +48,7 @@ body::after {
     box-shadow: 0 0 30px rgba(209, 106, 165, 0.1), 0 0 10px rgba(209, 106, 165, 0.1) inset;
 }
 h1, h2, h3 { color: var(--accent-yellow); }
-h1 { font-size: 3rem; text-align: center; margin-bottom: 1rem; text-shadow: 2px 2px var(--accent-pink); letter-spacing: 4px; }
+h1 { font-size: 3rem; display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; text-shadow: 2px 2px var(--accent-pink); letter-spacing: 4px; }
 h2 { font-size: 1.8rem; margin-bottom: 1rem; border-bottom: 1px solid var(--accent-pink-dim); padding-bottom: 0.5rem; }
 p { margin-bottom: 1rem; }
 hr { border: none; height: 1px; background-color: var(--accent-pink-dim); margin: 2.5rem 0; }
@@ -295,6 +295,41 @@ footer {
     margin-top: 2rem;
 }
 .footer-links a { margin-inline: 0.5rem; }
+#lastfm-connect-btn {
+    display: block;
+    font-family: inherit;
+    font-size: inherit;
+    background: none;
+    border: none;
+    color: var(--accent-pink);
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 0.5rem;
+    text-align: left;
+    transition: color 0.2s ease;
+}
+#lastfm-connect-btn:hover { color: var(--accent-yellow); }
+#lastfm-not-connected p, #lastfm-connected p { margin-bottom: 1rem; }
+#lastfm-auth-step2 { margin-top: 1.5rem; }
+#lastfm-auth-step2 p { margin-bottom: 0.75rem; }
+#lastfm-auth-start-btn, #lastfm-auth-complete-btn, #lastfm-disconnect-btn {
+    font-family: inherit;
+    font-size: 1rem;
+    background: none;
+    border: 1px solid var(--accent-pink);
+    color: var(--accent-pink);
+    cursor: pointer;
+    padding: 0.25rem 0.75rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+#lastfm-auth-start-btn:hover, #lastfm-auth-complete-btn:hover, #lastfm-disconnect-btn:hover {
+    background-color: var(--accent-pink);
+    color: var(--bg-color);
+}
+#lastfm-auth-start-btn:disabled, #lastfm-auth-complete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 @keyframes fadeIn { to { opacity: 1; } }
 @keyframes itemFadeIn { to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse-bg { 50% { background-color: var(--skeleton-highlight); } }

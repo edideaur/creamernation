@@ -2,7 +2,7 @@
   {
     "id": "TCNT2",
     "title": "THE CREAMER NATION TAPE VOL. 2",
-    "catalogInfo": "CN-T2 9.25.25",
+    "catalogInfo": "CN-T2 12.26.25",
     "imageUrl": "./assets/CNTAPE2/CNTAPE2.webp",
     "links": {
       "Download": "https://github.com/EduardPrigoana/creamernation/releases/download/cnt2/The.Creamer.Nation.Tape.Vol.2.zip",
@@ -15,7 +15,6 @@
       "Fish Scales",
       "WAR 3",
       "Deja (ft. Ja Maine)",
-      "Month-Long Spree",
       "Highway Robbery (Ft. Raf & Lukie)",
       "Lost In Translation",
       "Midnight Express (Interlude)",
@@ -23,25 +22,28 @@
       "Boys Don't Cry",
       "Lunar Eclipse",
       "Red Water",
-      "The Hunted"
+      "The Hunted",
+      "With You",
+      "Windy City Freestyle (Bonus)"
     ],
     "audioSrc": [
-  "./assets/CNTAPE2/audio/Light Up The Night.m4a",
-  "./assets/CNTAPE2/audio/Luxury Tax.m4a",
-  "./assets/CNTAPE2/audio/By Your Side.m4a",
-  "./assets/CNTAPE2/audio/Fish Scales.m4a",
-  "./assets/CNTAPE2/audio/WAR 3.m4a",
-  "./assets/CNTAPE2/audio/Deja (ft. Ja Maine).m4a",
-  "./assets/CNTAPE2/audio/Month-Long Spree.wav",
-  "./assets/CNTAPE2/audio/Highway Robbery (Ft. Raf & Lukie).m4a",
-  "./assets/CNTAPE2/audio/Lost In Translation.m4a",
-  "./assets/CNTAPE2/audio/Midnight Express (Interlude).m4a",
-  "./assets/CNTAPE2/audio/Runnin' Outta Love.m4a",
-  "./assets/CNTAPE2/audio/Boys Don't Cry.m4a",
-  "./assets/CNTAPE2/audio/Lunar Eclipse.m4a",
-  "./assets/CNTAPE2/audio/Red Water.m4a",
-  "./assets/CNTAPE2/audio/The Hunted.m4a"
-]
+      "./assets/CNTAPE2/audio/Light Up The Night (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Luxury Tax (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/By Your Side (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Fish Scales (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/WAR 3 (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Deja (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Highway Robbery (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Lost In Translation (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Midnight Express (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Runnin' Outta Love (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Boys Don't Cry (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Lunar Eclipse (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Red Water.m4a",
+      "./assets/CNTAPE2/audio/The Hunted (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/With You (Updated Mix).m4a",
+      "./assets/CNTAPE2/audio/Windy City Freestyle (Bonus) (Updated Mix).m4a"
+    ]
 
   },
   {
@@ -103,6 +105,7 @@
     "catalogInfo": "CN-VISION 1.10.25",
     "imageUrl": "./assets/VISION/VISION.webp",
     "links": {
+      "Monochrome": "https://monochrome.tf/album/420470433",
       "Tidal": "https://tidal.com/album/420470433",
       "Spotify": "https://open.spotify.com/album/4ENMydvAyHsh1r5tDJ67l8",
       "Apple Music": "https://music.apple.com/album/1798860467",
